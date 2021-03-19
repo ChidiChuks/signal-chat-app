@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Button, Input, Image } from 'react-native-elements';
+import { StyleSheet,  View } from 'react-native';
+import { Button, Input, Image, Text } from 'react-native-elements';
 import { KeyboardAvoidingView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -24,7 +24,7 @@ const LoginScreen = () => {
             </View>
 
             <Button containerStyle={styles.button} onPress={signIn} title="Login" />
-            <Button containerStyle={styles.button} type="outline" title="Register" />
+            <Button onPress={() => navigation.navigate("Register")} containerStyle={styles.button} type="outline" title="Register" />
             <View style={{ height: 100 }} />
         </KeyboardAvoidingView>
     )
