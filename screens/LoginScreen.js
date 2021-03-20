@@ -24,28 +24,44 @@ const LoginScreen = ({ navigation }) => {
         };
     }, []);
 
-    const signIn = () => {};
+    const signIn = () => {
+        auth.signInWithEmailAndPassword(email, password).catch(error => alert(error));
+    };
 
     return (
+        <ScrollView>
         <KeyboardAvoidingView behavior="padding" enabled style={styles.container}>
             <StatusBar style="light" />
 
-            <ScrollView>
                 <Image source={{
                     uri: "https://blog.mozilla.org/internetcitizen/files/2018/08/signal-logo.png",
                 }} style={{ width: 200, height: 200 }} />
 
                 <View style={styles.inputContainer}>
-                    <Input placeholder="Email" autoFocus type="email" value={email} onChangeText={(text) => setEmail(text)} />
-                    <Input placeholder="Password" secureTextEntry type="password" value={password} onChangeText={(text) => setPassword(text)} />
+
+                    <Input 
+                        placeholder="Email" 
+                        autoFocus 
+                        type="email" 
+                        value={email} 
+                        onChangeText={(text) => setEmail(text)} 
+                    />
+
+                    <Input 
+                        placeholder="Password" 
+                        secureTextEntry type="password" 
+                        value={password} 
+                        onChangeText={(text) => setPassword(text)}
+                        onSubmitEditing={signIn}
+                    />
+                    
                 </View>
 
                 <Button containerStyle={styles.button} onPress={signIn} title="Login" />
                 <Button onPress={() => navigation.navigate("Register")} containerStyle={styles.button} type="outline" title="Register" />
                 <View style={{ height: 100 }} />
-            </ScrollView>
-            
         </KeyboardAvoidingView>
+            </ScrollView>
     )
 }
 

@@ -34,10 +34,10 @@ const RegisterScreen = ({ navigation }) => {
     };
 
     return (
+            <ScrollView>
         <KeyboardAvoidingView behavior="padding" style={styles.container}>
             <StatusBar style="light" />
 
-            <ScrollView>
                 <Text h3 style={{ marginBottom: 50 }}>Create a Signal account</Text>
 
                 <View style={styles.inputContainer}>
@@ -59,10 +59,10 @@ const RegisterScreen = ({ navigation }) => {
                     onPress={register}
                     title="Register"
                 />
-                <View style={{ height: 50 }} />
-            </ScrollView>
+                <View style={{ height: 100 }} />
             
         </KeyboardAvoidingView>
+            </ScrollView>
     )
 }
 
