@@ -1,25 +1,46 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, KeyboardAvoidingView, ScrollView, TextInput  } from 'react-native';
+
+import { 
+    StyleSheet, 
+    Text, 
+    View, 
+    TouchableOpacity, 
+    SafeAreaView, 
+    KeyboardAvoidingView, 
+    ScrollView, 
+    TextInput, 
+    Keyboard,
+    TouchableWithoutFeedback,
+} from 'react-native';
+
 import { Avatar } from 'react-native-elements/dist/avatar/Avatar';
 import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
+import * as firebase from "firebase";
+import { db, auth } from "../firebase";
 
 const ChatScreen = ({ navigation, route }) => {
 
     const [input, setInput] = useState("");
+    const [messages, setMessages] = useState([]);
 
     useLayoutEffect(() => {
         navigation.setOptions({
-            title: "Chat",
+            title: "Chat",  
             headerBackTitleVisible: false,
             headerTitleAlign: "left",
+
             headerTitle: () => (
+
                 <View style={{flexDirections: "row", alignItems: "center",}}>
+
                     <Avatar 
                         rounded
                         source={{uri: "https://cencup.com/wp-content/uploads/2019/07/avatar-placeholder.png",}}
                     />
+
                     <Text style={{ color: "white", marginLeft: 10, fontWeight: "700" }}>{route.params.chatName}</Text>
+
                 </View>
             ),
             // header design left
@@ -44,34 +65,85 @@ const ChatScreen = ({ navigation, route }) => {
     }, [navigation]);
 
     // creating a function of sendMessage
-    const sendMessage = () => {};
+    const sendMessage = () => {
+        Keyboard.dismiss();
+
+        db.collection('chats').doc(route.params.id).collection('messages').add({
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            message: input,
+            displayName: auth.currentUser.displayName,
+            email: auth.currentUser.email,
+            photoURL: auth.currentUser.photoURL
+        });
+
+        setInput("");
+    };
+
+    // Creating a useLayoutEffect
+    useLayoutEffect(() => {
+        // Setting up a listener
+        const unsubscribe = db.collection('chats').doc(route.params.id)
+        .collection('messages')
+        .orderBy('timestamp', 'desc').onSnapshot(snapshot => setMessages(
+            snapshot.docs.map(doc => ({
+                id: doc.id,
+                data: doc.data()
+            }))
+        ));
+
+        return unsubscribe;
+    }, [route]);
         
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+
             <StatusBar style="light" />
+
             <KeyboardAvoidingView 
                 behavior={Platform.OS === "ios" ? "padding" : "height"} 
                 style={styles.container} 
                 keyboardVerticalOffset={90}
             >
-                <>
-                    <ScrollView>
-                        {/* Chat goes here */}
-                    </ScrollView>
-                    <View style={styles.footer}>
-                        <TextInput 
-                            value={input} 
-                            onChangeText={(text) => setInput(text)} 
-                            placeholder="Signal Message" 
-                            style={styles.textInput} 
-                        />
 
-                        <TouchableOpacity onPress={sendMessage} activeOpacity={0.5}>
-                            <Ionicons name="send" size={24} color="#2B68E6" />
-                        </TouchableOpacity>
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 
-                    </View>
-                </>
+                    <>
+                        <ScrollView>
+                            {/* Chat goes here */}
+                            {messages.map(({id, data}) => (
+                                data.email === auth.currentUser.email ? (
+                                    <View key={id} style={styles.receiver}>
+                                        <Avatar />
+                                        <Text style={styles.receiverText}>{data.message}</Text>
+                                    </View>
+                                ) : (
+                                    <View style={styles.sender}>
+                                        <Avatar />
+                                        <Text style={styles.senderText}>{data.message}</Text>
+                                    </View>
+                                )
+                            ))}
+                        </ScrollView>
+
+                        <View style={styles.footer}>
+
+                            <TextInput 
+                                value={input} 
+                                onChangeText={(text) => setInput(text)} 
+                                onSubmitEditing={sendMessage}
+                                placeholder="Signal Message" 
+                                style={styles.textInput} 
+                            />
+
+                            <TouchableOpacity onPress={sendMessage} activeOpacity={0.5}>
+                                <Ionicons name="send" size={24} color="#2B68E6" />
+                            </TouchableOpacity>
+
+                        </View>
+                    </>
+
+                </TouchableWithoutFeedback>
+
             </KeyboardAvoidingView>
         </SafeAreaView>
     )
