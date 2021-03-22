@@ -113,12 +113,42 @@ const ChatScreen = ({ navigation, route }) => {
                             {messages.map(({id, data}) => (
                                 data.email === auth.currentUser.email ? (
                                     <View key={id} style={styles.receiver}>
-                                        <Avatar />
+                                        <Avatar 
+                                            position="absolute"
+                                            bottom={-15}
+                                            right={-5}
+                                            rounded
+                                            // Hack for it to work on the WEB
+                                            containerStyle={{
+                                                position: "absolute",
+                                                bottom: -15,
+                                                right: -5,
+                                            }}
+
+                                            size={30}
+                                            source={{uri: data.photoURL,}}
+                                        />
                                         <Text style={styles.receiverText}>{data.message}</Text>
                                     </View>
                                 ) : (
                                     <View style={styles.sender}>
-                                        <Avatar />
+                                        <Avatar 
+                                            position="absolute"
+
+                                            containerStyle={{
+                                                position: "absolute",
+                                                bottom: -15,
+                                                left: -5
+                                            }}
+
+                                            bottom={-15}
+                                            left={-5}
+                                            rounded
+                                            size={30}
+                                            source={{
+                                                uri: data.photoURL,
+                                            }}
+                                        />
                                         <Text style={styles.senderText}>{data.message}</Text>
                                     </View>
                                 )
@@ -154,6 +184,25 @@ export default ChatScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    receiver: {
+        padding: 15,
+        backgroundColor: "#ECECEC",
+        alignSelf: "flex-end",
+        borderRadius: 20,
+        marginRight: 15,
+        marginBottom: 20,
+        maxWidth: "80%",
+        position: "relative",
+    },
+    sender: {
+        padding: 15,
+        backgroundColor: "#2B68E6",
+        alignSelf: "flex-start",
+        borderRadius: 20,
+        margin: 15,
+        maxWidth: "80%",
+        position: "relative",
     },
     footer: {
         flexDirection: "row",
