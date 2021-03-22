@@ -21,7 +21,7 @@ const AddChat = ({ navigation }) => {
             chatName: input,
         }).then(() => {
             navigation.goBack()
-        }).catch(error => alert(error));
+        }).catch((error) => alert(error));
     }
 
     return (
@@ -36,7 +36,7 @@ const AddChat = ({ navigation }) => {
                 }
             />
 
-            <Button onPress={createChat} title="Create new Chat" />
+            <Button disabled={!input} onPress={createChat} title="Create new Chat" />
         </View>
     )
 }
