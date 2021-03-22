@@ -36,7 +36,7 @@ const ChatScreen = ({ navigation, route }) => {
 
                     <Avatar 
                         rounded
-                        source={{uri: "https://cencup.com/wp-content/uploads/2019/07/avatar-placeholder.png",}}
+                        source={{uri: messages[0] ?.data.photoURL || "https://cencup.com/wp-content/uploads/2019/07/avatar-placeholder.png",}}
                     />
 
                     <Text style={{ color: "white", marginLeft: 10, fontWeight: "700" }}>{route.params.chatName}</Text>
@@ -62,7 +62,7 @@ const ChatScreen = ({ navigation, route }) => {
                 </View>
             ),
         });
-    }, [navigation]);
+    }, [navigation, messages]);
 
     // creating a function of sendMessage
     const sendMessage = () => {
@@ -108,7 +108,7 @@ const ChatScreen = ({ navigation, route }) => {
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 
                     <>
-                        <ScrollView>
+                        <ScrollView contentContainerStyle={{ paddingTop: 15, }}>
                             {/* Chat goes here */}
                             {messages.map(({id, data}) => (
                                 data.email === auth.currentUser.email ? (
@@ -150,6 +150,7 @@ const ChatScreen = ({ navigation, route }) => {
                                             }}
                                         />
                                         <Text style={styles.senderText}>{data.message}</Text>
+                                        <Text style={styles.senderName}>{data.displayName}</Text>
                                     </View>
                                 )
                             ))}
@@ -203,6 +204,23 @@ const styles = StyleSheet.create({
         margin: 15,
         maxWidth: "80%",
         position: "relative",
+    },
+    senderText: {
+        color: "white",
+        fontWeight: "500",
+        marginLeft: 10,
+        marginBottom: 15,
+    },
+    receiverText: {
+        color: "black",
+        fontWeight: "500",
+        marginLeft: 10,
+    },
+    senderName: {
+        left: 10,
+        paddingRight: 10,
+        fontSize: 10,
+        color: "white"
     },
     footer: {
         flexDirection: "row",
